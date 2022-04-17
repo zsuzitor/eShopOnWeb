@@ -25,14 +25,88 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using MinimalApi.Endpoint.Configurations.Extensions;
 using MinimalApi.Endpoint.Extensions;
+using Microsoft.Extensions.Logging.ApplicationInsights;
+using Azure.Identity;
+
 
 var builder = WebApplication.CreateBuilder(args);
-
 builder.Services.AddEndpoints();
 
 //Use to force loading of appsettings.json of test project
 builder.Configuration.AddConfigurationFile();
-builder.Logging.AddConsole();
+
+
+#region key_vault
+//builder.Configuration.AddAzureAppConfiguration();
+//builder.Host.ConfigureAppConfiguration((hostingContext, config) =>
+//    {
+//        var settings = config.Build();
+
+//        config.AddAzureAppConfiguration(options =>
+//        {
+//            options.Connect("Endpoint=https://zsuz-learn-app-config.azconfig.io;Id=S+u+-l8-s0:G8kfZRMLK4bh5to/Vm24;Secret=yc2lGjFALTPhh7XScMKSVAoh6V4Y4h5eMeE/IMLhfOM=")//settings["ConnectionStrings__TestKeyVault"])
+//                    .ConfigureKeyVault(kv =>
+//                    {
+//                        //kv.SetCredential(new DefaultAzureCredential());
+//                        kv.SetCredential(new UsernamePasswordCredential());
+
+
+//                    });
+//        });
+//    });
+
+//----------------------
+
+builder.Host.ConfigureAppConfiguration((context, config) =>
+ {
+     // Build the current set of configuration to load values from
+     // JSON files and environment variables, including VaultName.
+     var builtConfig = config.Build();
+
+     // Use VaultName from the configuration to create the full vault URI.
+     var vaultName = builtConfig["VaultName"];
+     Uri vaultUri = new Uri($"https://{vaultName}.vault.azure.net/");
+
+     // Load all secrets from the vault into configuration. This will automatically
+     // authenticate to the vault using a managed identity. If a managed identity
+     // is not available, it will check if Visual Studio and/or the Azure CLI are
+     // installed locally and see if they are configured with credentials that can
+     // access the vault.
+     config.AddAzureKeyVault(vaultUri, new DefaultAzureCredential());
+ });
+
+#endregion key_vault
+
+
+
+
+
+
+//builder.Logging.AddConsole();
+
+
+//builder.Services.AddApplicationInsightsTelemetry(opt =>
+//{
+
+//});
+//builder.Services.AddLogging(logginBuilder =>
+//{
+//    // Only Application Insights is registered as a logger provider
+//    //builder.AddApplicationInsights();//"<YourInstrumentationKey>"
+//    //logginBuilder.AddApplicationInsights(builder.Services, LogLevel.Debug);
+//    logginBuilder.AddFilter<ApplicationInsightsLoggerProvider>(
+//                            typeof(Program).FullName, LogLevel.Trace);
+//});
+
+
+
+//builder.UseApplicationInsights(10);
+
+//Server=tcp:zsuz-learn-sql-server.database.windows.net,1433;Initial Catalog=zsuz-learn-sql;Persist Security Info=False;User ID=avdosev_az_learn;Password=wryuikjsdfhk&*243h;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;
+//Server=tcp:zsuz-learn-sql-server.database.windows.net,1433;Initial Catalog=zsuz-learn-sql-identity;Persist Security Info=False;User ID=avdosev_az_learn;Password=wryuikjsdfhk&*243h;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;
+
+builder.Services.AddHttpClient();
+builder.Services.Configure<CatalogSettings>(builder.Configuration);
 
 Microsoft.eShopWeb.Infrastructure.Dependencies.ConfigureServices(builder.Configuration, builder.Services);
 
@@ -126,6 +200,42 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 var app = builder.Build();
+
+try
+{
+    
+    //throw new Exception("Cannot move further startup(program)");//todo
+
+}
+catch(Exception e)
+{
+    var builderErr = WebApplication.CreateBuilder(args);
+    builderErr.Services.AddApplicationInsightsTelemetry(opt =>
+    {
+        //эти 2 строки добавлены что бы попробовать прорастить стек для исключений
+        //opt.EnableAdaptiveSampling = false;
+        //opt.EnableQuickPulseMetricStream = false;
+
+    });
+
+    builderErr.Services.AddLogging(logginBuilder =>
+    {
+        // Only Application Insights is registered as a logger provider
+        //builder.AddApplicationInsights();//"<YourInstrumentationKey>"
+        //logginBuilder.AddApplicationInsights(builder.Services, LogLevel.Debug);
+        logginBuilder.AddFilter<ApplicationInsightsLoggerProvider>(
+                                typeof(Program).FullName, LogLevel.Trace);
+    });
+    var appErr = builderErr.Build();
+    var loggerErr = appErr.Services.GetService<ILogger<Program>>();
+    loggerErr.LogError(e, e.Message);
+    throw;
+}
+
+var loggerFactory = app.Services.GetService<ILoggerFactory>();
+
+//loggerFactory.AddApplicationInsights(app.Services, LogLevel.Information);
+//
 
 app.Logger.LogInformation("PublicApi App created...");
 

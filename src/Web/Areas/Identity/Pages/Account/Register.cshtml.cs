@@ -59,7 +59,7 @@ public class RegisterModel : PageModel
 
     public void OnGet(string returnUrl = null)
     {
-        ReturnUrl = returnUrl;
+        ReturnUrl = returnUrl ?? Url.Content("~/");
     }
 
     public async Task<IActionResult> OnPostAsync(string returnUrl = null)

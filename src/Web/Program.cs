@@ -1,5 +1,6 @@
 ﻿using System.Net.Mime;
 using Ardalis.ListStartupServices;
+using Azure.Identity;
 using BlazorAdmin;
 using BlazorAdmin.Services;
 using Blazored.LocalStorage;
@@ -21,6 +22,47 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Logging.AddConsole();
 
+
+
+#region key_vault
+//builder.Configuration.AddAzureAppConfiguration();
+//builder.Host.ConfigureAppConfiguration((hostingContext, config) =>
+//    {
+//        var settings = config.Build();
+
+//        config.AddAzureAppConfiguration(options =>
+//        {
+//            options.Connect("Endpoint=https://zsuz-learn-app-config.azconfig.io;Id=S+u+-l8-s0:G8kfZRMLK4bh5to/Vm24;Secret=yc2lGjFALTPhh7XScMKSVAoh6V4Y4h5eMeE/IMLhfOM=")//settings["ConnectionStrings__TestKeyVault"])
+//                    .ConfigureKeyVault(kv =>
+//                    {
+//                        //kv.SetCredential(new DefaultAzureCredential());
+//                        kv.SetCredential(new UsernamePasswordCredential());
+
+
+//                    });
+//        });
+//    });
+
+builder.Host.ConfigureAppConfiguration((context, config) =>
+{
+    // Build the current set of configuration to load values from
+    // JSON files and environment variables, including VaultName.
+    var builtConfig = config.Build();
+
+    // Use VaultName from the configuration to create the full vault URI.
+    var vaultName = builtConfig["VaultName"];
+    Uri vaultUri = new Uri($"https://{vaultName}.vault.azure.net/");
+
+    // Load all secrets from the vault into configuration. This will automatically
+    // authenticate to the vault using a managed identity. If a managed identity
+    // is not available, it will check if Visual Studio and/or the Azure CLI are
+    // installed locally and see if they are configured with credentials that can
+    // access the vault.
+    config.AddAzureKeyVault(vaultUri, new DefaultAzureCredential());
+});
+
+#endregion key_vault
+
 Microsoft.eShopWeb.Infrastructure.Dependencies.ConfigureServices(builder.Configuration, builder.Services);
 
 builder.Services.AddCookieSettings();
@@ -39,6 +81,8 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
                            .AddDefaultTokenProviders();
 
 builder.Services.AddScoped<ITokenClaimsService, IdentityTokenClaimService>();
+
+builder.Services.AddHttpClient();
 
 builder.Services.AddCoreServices(builder.Configuration);
 builder.Services.AddWebServices(builder.Configuration);

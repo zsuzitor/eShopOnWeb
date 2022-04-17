@@ -27,10 +27,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		docker-compose.override.yml = docker-compose.override.yml
 		docker-compose.yml = docker-compose.yml
 		.github\workflows\dotnetcore.yml = .github\workflows\dotnetcore.yml
+		myReadme.txt = myReadme.txt
 		README.md = README.md
 	EndProjectSection
-EndProject
-Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{1FCBE191-34FE-4B2E-8915-CA81553958AD}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PublicApi", "src\PublicApi\PublicApi.csproj", "{B5E4F33C-4667-4A55-AF6A-740F84C4CF3A}"
 EndProject
@@ -38,7 +37,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorAdmin", "src\BlazorAd
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorShared", "src\BlazorShared\BlazorShared.csproj", "{715CF7AF-A1EE-40A6-94A0-8DA3F3B2CAE9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PublicApiIntegrationTests", "tests\PublicApiIntegrationTests\PublicApiIntegrationTests.csproj", "{D53EF010-8F8C-4337-A059-456E19D8AE63}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PublicApiIntegrationTests", "tests\PublicApiIntegrationTests\PublicApiIntegrationTests.csproj", "{D53EF010-8F8C-4337-A059-456E19D8AE63}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OrderItemsReserver", "src\OrderItemsReserver\OrderItemsReserver.csproj", "{C02EC1DE-414B-40C7-A933-923D38A5410C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -70,10 +71,6 @@ Global
 		{7EFB5482-F942-4C3D-94B0-9B70596E6D0A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7EFB5482-F942-4C3D-94B0-9B70596E6D0A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7EFB5482-F942-4C3D-94B0-9B70596E6D0A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1FCBE191-34FE-4B2E-8915-CA81553958AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1FCBE191-34FE-4B2E-8915-CA81553958AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1FCBE191-34FE-4B2E-8915-CA81553958AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1FCBE191-34FE-4B2E-8915-CA81553958AD}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B5E4F33C-4667-4A55-AF6A-740F84C4CF3A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B5E4F33C-4667-4A55-AF6A-740F84C4CF3A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B5E4F33C-4667-4A55-AF6A-740F84C4CF3A}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -90,6 +87,10 @@ Global
 		{D53EF010-8F8C-4337-A059-456E19D8AE63}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D53EF010-8F8C-4337-A059-456E19D8AE63}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D53EF010-8F8C-4337-A059-456E19D8AE63}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C02EC1DE-414B-40C7-A933-923D38A5410C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C02EC1DE-414B-40C7-A933-923D38A5410C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C02EC1DE-414B-40C7-A933-923D38A5410C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C02EC1DE-414B-40C7-A933-923D38A5410C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -105,6 +106,7 @@ Global
 		{71368733-80A4-4869-B215-3A7001878577} = {419A6ACE-0419-4315-A6FB-B0E63D39432E}
 		{715CF7AF-A1EE-40A6-94A0-8DA3F3B2CAE9} = {419A6ACE-0419-4315-A6FB-B0E63D39432E}
 		{D53EF010-8F8C-4337-A059-456E19D8AE63} = {15EA4737-125B-4E6E-A806-E13B7EBCDCCF}
+		{C02EC1DE-414B-40C7-A933-923D38A5410C} = {419A6ACE-0419-4315-A6FB-B0E63D39432E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {49813262-5DA3-4D61-ABD3-493C74CE8C2B}

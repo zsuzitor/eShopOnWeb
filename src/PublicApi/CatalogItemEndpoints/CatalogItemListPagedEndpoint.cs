@@ -9,6 +9,8 @@ using Microsoft.eShopWeb.ApplicationCore.Entities;
 using Microsoft.eShopWeb.ApplicationCore.Interfaces;
 using Microsoft.eShopWeb.ApplicationCore.Specifications;
 using MinimalApi.Endpoint;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Configuration;
 
 namespace Microsoft.eShopWeb.PublicApi.CatalogItemEndpoints;
 
@@ -21,10 +23,16 @@ public class CatalogItemListPagedEndpoint : IEndpoint<IResult, ListPagedCatalogI
     private readonly IUriComposer _uriComposer;
     private readonly IMapper _mapper;
 
-    public CatalogItemListPagedEndpoint(IUriComposer uriComposer, IMapper mapper)
+    private readonly ILogger _logger;
+    private readonly IConfiguration _configuration;
+
+    public CatalogItemListPagedEndpoint(IUriComposer uriComposer, IMapper mapper
+        , ILogger<CatalogItemListPagedEndpoint> logger, IConfiguration configuration)
     {
         _uriComposer = uriComposer;
         _mapper = mapper;
+        _logger = logger;
+        _configuration = configuration;
     }
 
     public void AddRoute(IEndpointRouteBuilder app)
@@ -41,6 +49,9 @@ public class CatalogItemListPagedEndpoint : IEndpoint<IResult, ListPagedCatalogI
 
     public async Task<IResult> HandleAsync(ListPagedCatalogItemRequest request)
     {
+        //var valueFromVault = _configuration.GetConnectionString("TestKeyVault");
+        var valueFromVault = _configuration["testSecret"];
+        return Results.Ok($"value from Vault{valueFromVault}");
         var response = new ListPagedCatalogItemResponse(request.CorrelationId());
 
         var filterSpec = new CatalogFilterSpecification(request.CatalogBrandId, request.CatalogTypeId);
@@ -69,6 +80,21 @@ public class CatalogItemListPagedEndpoint : IEndpoint<IResult, ListPagedCatalogI
             response.PageCount = totalItems > 0 ? 1 : 0;
         }
 
+        //_logger.LogInformation($"catalog-items count - {totalItems}");
+        //_logger.LogError($"test-error - {totalItems}");
+        //_logger.LogWarning($"test-warning - {totalItems}");
+
+        //var exc = new Exception("test");
+        //_logger.LogError(exc, "test with exc");
+        //try
+        //{
+        //    throw exc;
+        //}
+        //catch(Exception e)
+        //{
+        //    _logger.LogError(e, "test with exc from catch");
+        //    throw;
+        //}
         return Results.Ok(response);
     }
 }
